@@ -1,0 +1,4 @@
+IRC Bot in PHP written by s0up from haxt.net
+
+You can add your own user defined bot events by adding a php file to the plugins folder and checking out the preset example plugins.
+
