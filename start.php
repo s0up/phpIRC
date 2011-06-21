@@ -1,22 +1,29 @@
 <?php
-include("core/class/phpIRC.php");
-include("core/class/function.php");
-include("custom/config.php");
-include("custom/function.php");
-//load irc object
-$irc = new IRC($host, $port, $username, $password, $nick, $channel, $fullname);
-$irc->set_var("message_trigger", "message_trigger");
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
+
+//load core
+chainload("core");
+//load user defined stuff
+chainload("custom");
+
+//create object
+$irc = new IRC(IRC_HOST, IRC_PORT, IRC_USERNAME, IRC_PASSWORD, IRC_NICK, IRC_CHANNEL, IRC_FULL_NAME);
+
 //load core functions
 $func = new Func();
+
 //Load user defined plugins
-if ($handle = opendir('plugins')) {
-    while (false !== ($file = readdir($handle))) {
-       if($file != "." & $file != ".."){
-	   		require_once("plugins/$file");
-	   }
-       	
-    }
+chainload('plugins');
+
+//chainload method
+function chainload($directory){
+	global $irc;
+	foreach (glob("$directory/*.php") as $filename)
+	{
+	    require_once($filename);
+	}
 }
+
 //start irc
 if($irc->connect()){
 	$irc->start(true); //true if you want to identify
